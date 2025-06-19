@@ -1,35 +1,32 @@
-//package com.example.demo.Controller;
-//
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//import org.springframework.http.ResponseEntity;
-//
-//import java.io.File;
-//import java.io.IOException;
-//
-//@RestController
-//@CrossOrigin(origins = "*")
-//public class FileUploadController {
-//
-//    private static final String UPLOAD_DIR = "uploads/";
-//
-//    @PostMapping("/upload")
-//    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
-//        try {
-//            File directory = new File(UPLOAD_DIR);
-//            if (!directory.exists()) {
-//                directory.mkdirs();
-//            }
-//
-//            String filePath = UPLOAD_DIR + file.getOriginalFilename();
-//            System.out.println("Saving file to: " + filePath); // Debug log
-//            file.transferTo(new File(filePath));
-//
-//            return ResponseEntity.ok("File uploaded successfully: " + filePath);
-//        } catch (IOException e) {
-//            e.printStackTrace(); // Print full error
-//            return ResponseEntity.status(500).body("File upload failed: " + e.getMessage());
-//        }
-//    }
-//
-//}
+package com.example.demo.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.springframework.http.MediaType;
+
+
+@RestController
+@RequestMapping("/resume")
+@CrossOrigin(origins = "*")
+public class FileUploadController {
+	
+	@PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+		String fileName=file.getOriginalFilename();
+		try {
+			file.transferTo(new File("D:\\sh\\"+fileName));
+		} catch (IllegalStateException | IOException e) {
+			e.printStackTrace();
+		}
+		return "File uploaded Successfully";
+	}
+
+
+}

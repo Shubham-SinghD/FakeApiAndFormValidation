@@ -19,10 +19,10 @@
 //	@Autowired
 //	private ArticleService articleService;
 //	
-////	@GetMapping("/Home")
-////	public String home() {
-////		return "Home PAge";
-////	}
+//	@GetMapping("/Home")
+//	public String home() {
+//		return "Home PAge";
+//	}
 //	
 //	@PostMapping("/setArt")
 //	public  ArticleApi setAticleUser(@RequestBody ArticleApi articleapi) {

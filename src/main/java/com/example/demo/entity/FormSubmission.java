@@ -1,10 +1,6 @@
 package com.example.demo.entity;
 
 
-
-import java.sql.Date;
-import java.sql.Time;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -19,7 +15,7 @@ public class FormSubmission {
     private String email;
     private String password;
     private String phone;
-    private String age;
+    private String age; 
     private String gender;
     private String dob;
     private String time;
