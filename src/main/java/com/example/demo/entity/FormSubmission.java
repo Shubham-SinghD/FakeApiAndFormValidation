@@ -1,8 +1,11 @@
 package com.example.demo.entity;
 
 
-import jakarta.persistence.*;
+import java.util.Set;
 
+import jakarta.persistence.*;
+import lombok.Data;
+//@Data
 @Entity
 @Table(name = "form_submissions1")
 public class FormSubmission {
@@ -27,9 +30,17 @@ public class FormSubmission {
     private String css;
     private String js;
     
-    public FormSubmission(String name, String email, String password, String phone, String age, String gender,
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(name="form_resume" ,
+    joinColumns = @JoinColumn(name="form_id",referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name="resume_id",referencedColumnName = "id")
+    		)
+    
+    private Set<PdfDocument>pdfDocument;
+
+	public FormSubmission(String name, String email, String password, String phone, String age, String gender,
 			String dob, String time, String state, String message, String java, String sql, String html, String css,
-			String js) {
+			String js, Set<PdfDocument> pdfDocument) {
 		super();
 		this.name = name;
 		this.email = email;
@@ -46,11 +57,11 @@ public class FormSubmission {
 		this.html = html;
 		this.css = css;
 		this.js = js;
+		this.pdfDocument = pdfDocument;
 	}
 
 	public FormSubmission() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
@@ -180,8 +191,16 @@ public class FormSubmission {
 	public void setJs(String js) {
 		this.js = js;
 	}
+
+	public Set<PdfDocument> getPdfDocument() {
+		return pdfDocument;
+	}
+
+	public void setPdfDocument(Set<PdfDocument> pdfDocument) {
+		this.pdfDocument = pdfDocument;
+	}
     
-	
+    
 	
    
 

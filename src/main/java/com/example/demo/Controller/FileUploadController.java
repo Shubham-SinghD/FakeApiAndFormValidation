@@ -13,6 +13,7 @@ import com.example.demo.entity.PdfDocument;
 import com.example.demo.service.ResumeService;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,21 +27,29 @@ import org.springframework.http.ResponseEntity;
 public class FileUploadController {
 	@Autowired
 	ResumeService resumeService;
+	
 	@PostMapping(path = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public String handleFileUpload(@RequestParam("file") MultipartFile file) {
 		return resumeService.uploadFile(file);
 	}
 
 	@GetMapping("/AllFile")
-	public ResponseEntity<byte[]> showUploadedFile() {
+	public ResponseEntity<byte[]> showUploadedFilezip() {
 		return resumeService.downloadAllAsZip();
 	}
+	
 	@GetMapping("/downloadFileResume/{id}")
 	public ResponseEntity<byte[]> downloadFile(@PathVariable("id") int id) {
 		return resumeService.downloadFile(id);
 	   
 	}
 	
+	@GetMapping("/AllFile1")
+	public ResponseEntity<List<Map<String, String>>> showUploadedFile() {
+		return resumeService.getAllDocuments();
+	}
+	
+
 	
 	
 	

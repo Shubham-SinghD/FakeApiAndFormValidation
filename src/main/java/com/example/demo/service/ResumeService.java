@@ -3,7 +3,10 @@ package com.example.demo.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -14,12 +17,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.Repository.ResumeRepo;
-import com.example.demo.entity.FileResponse;
 import com.example.demo.entity.PdfDocument;
 @Service
 public class ResumeService {
@@ -38,15 +39,10 @@ public class ResumeService {
 		}
 	}
 	
-//	public List<PdfDocument> showFile() {
-//		List<PdfDocument> all = resumeRepo.findAll();
-//		if(!all.isEmpty()) {
-////			all.g
-//		}
-//	}
 
 
-	public ResponseEntity<byte[]> downloadFile( int id) {
+
+	public ResponseEntity<byte[]> downloadFile(int id) {
         Optional<PdfDocument> optionalDoc = resumeRepo.findById(id);
 
         if (optionalDoc.isPresent()) {
@@ -64,7 +60,7 @@ public class ResumeService {
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        } 
     }
 
     private MediaType getMediaType(String filename) {
@@ -76,30 +72,10 @@ public class ResumeService {
         if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return MediaType.IMAGE_JPEG;
         if (lower.endsWith(".gif")) return MediaType.IMAGE_GIF;
 
-        return MediaType.APPLICATION_OCTET_STREAM; // default fallback
+        return MediaType.APPLICATION_OCTET_STREAM; 
     }
     
-    public ResponseEntity<List<FileResponse>> downloadAllFiles() {
-        List<PdfDocument> documents = resumeRepo.findAll();
 
-        List<FileResponse> responses = new ArrayList<>();
-
-        for (PdfDocument doc : documents) {
-            String filename = doc.getFilename();
-            byte[] content = doc.getPdfContent();
-            MediaType mediaType = getMediaType(filename);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(mediaType);
-            headers.setContentDisposition(ContentDisposition.builder("attachment")
-                    .filename(filename).build());
-
-            FileResponse fileResponse = new FileResponse(filename, mediaType.toString(), content);
-            responses.add(fileResponse);
-//            new ResponseEntity<>(content, headers, HttpStatus.OK);
-        }
-
-        return ResponseEntity.ok(responses);
-    }
 
     public ResponseEntity<byte[]> downloadAllAsZip() {
         List<PdfDocument> documents = resumeRepo.findAll();
@@ -129,6 +105,62 @@ public class ResumeService {
     }
 
     
+//    public ResponseEntity<byte[]> AlldownloadFile() {
+//         List<PdfDocument> optionalDoc = resumeRepo.findAll();
+//
+//        if (optionalDoc.isEmpty()) {
+//        	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        } 
+////        
+////            PdfDocument doc = optionalDoc.get(0);
+////            String filename = doc.getFilename();
+////            byte[] content = doc.getPdfContent();
+////
+////            MediaType mediaType = getMediaType(filename);
+////
+////            HttpHeaders headers = new HttpHeaders();
+////            headers.setContentType(mediaType);
+////            headers.setContentDisposition(ContentDisposition.builder("attachment")
+////                    .filename(filename).build());
+////
+////            return new ResponseEntity<>(content, headers, HttpStatus.OK);
+//        PdfDocument doc = optionalDoc.get(0); // Assuming you want the first document
+//        String filename = doc.getFilename();
+//        byte[] content = doc.getPdfContent();
+//
+//        MediaType mediaType = getMediaType(filename);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(mediaType);
+//        headers.setContentDisposition(ContentDisposition.builder("attachment")
+//                .filename(filename).build());
+//
+//        return new ResponseEntity<>(content, headers, HttpStatus.OK);
+//}
+
+    
+    public ResponseEntity<List<Map<String, String>>> getAllDocuments() {
+        List<PdfDocument> documents = resumeRepo.findAll();
+
+        if (documents.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<Map<String, String>> response = new ArrayList<>();
+
+        for (PdfDocument doc : documents) {
+            Map<String, String> fileData = new HashMap<>();
+            fileData.put("filename", doc.getFilename());
+            fileData.put("contentType", getMediaType(doc.getFilename()).toString());
+            fileData.put("base64", Base64.getEncoder().encodeToString(doc.getPdfContent()));
+            response.add(fileData);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+    
+
+
     
 	
 

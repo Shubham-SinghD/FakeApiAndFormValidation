@@ -1,7 +1,8 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
+import lombok.Data;
+//@Data
 @Entity
 @Table(name = "pdf_documents")
 public class PdfDocument {
